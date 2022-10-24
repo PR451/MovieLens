@@ -16,7 +16,7 @@ const Search = () => {
   const [type, setType] = useState(0);
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
-  const [content, setContent] = useState();
+  const [content, setContent] = useState([]);
   const [numOfPages, setNumOfPages] = useState();
 
   const fetchSearch = async () => {
@@ -83,9 +83,6 @@ const Search = () => {
               media_type={c.media_type}
               vote_average={c.vote_average}/>
           ))}
-          {searchText &&
-            !content &&
-            (type ? <h2>No Series Found</h2> : <h2>No Movies Found</h2>)}
         </div>
         
         {numOfPages > 1 && (
