@@ -18,6 +18,7 @@ const Search = () => {
   const [searchText, setSearchText] = useState("");
   const [content, setContent] = useState([]);
   const [numOfPages, setNumOfPages] = useState();
+  const [isSearch, setIsSearch] = useState(false);
 
   const fetchSearch = async () => {
     try {
@@ -26,11 +27,22 @@ const Search = () => {
           process.env.REACT_APP_API_KEY
         }&language=en-US&query=${searchText}&page=${page}&include_adult=false`
       )
+      console.log("pageNum: " + page);
       setContent(data.results);
       setNumOfPages(data.total_pages);
     } catch (error) {
       console.error(error);
     }
+  }
+
+  const onClickFn = () => {
+    fetchSearch();
+    setIsSearch(true);
+  }
+
+  const onTextChangeFn = (e) => {
+    setSearchText(e.target.value);
+    setIsSearch(false);
   }
 
   useEffect(() => {
@@ -48,12 +60,12 @@ const Search = () => {
                 className="searchBox"
                 label="Search"
                 variant="filled"
-                onChange={(e) => setSearchText(e.target.value)}
+                onChange={onTextChangeFn}
               />
             <Button 
               variant='contained' 
               style={{marginLeft:10}}
-              onClick={fetchSearch}> 
+              onClick={onClickFn}>
               <SearchIcon /> 
             </Button>
           </div>
@@ -84,7 +96,12 @@ const Search = () => {
               vote_average={c.vote_average}/>
           ))}
         </div>
-        
+
+        {searchText && isSearch &&
+            content.length === 0 &&
+            (type ? <h2>No Series Found</h2> : <h2>No Movies Found</h2>)}
+
+        {console.log("Rendring page: " + page)}
         {numOfPages > 1 && (
           <CustomPagination setPage={setPage} numOfPages={numOfPages} />
         )}
