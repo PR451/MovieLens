@@ -21,13 +21,15 @@ const Search = () => {
 
   const fetchSearch = async () => {
     try {
-      const {data} = await axios.get(
-        `https://api.themoviedb.org/3/search/${type ? "tv":"movie"}?api_key=${
-          process.env.REACT_APP_API_KEY
-        }&language=en-US&query=${searchText}&page=${paginationState.curPage}&include_adult=false`
-      )
-      setContent(data.results);
-      setPaginationState({curPage: paginationState.curPage, numOfPages: data.total_pages});
+      if(searchText !== ""){
+        const {data} = await axios.get(
+          `https://api.themoviedb.org/3/search/${type ? "tv":"movie"}?api_key=${
+            process.env.REACT_APP_API_KEY
+          }&language=en-US&query=${searchText}&page=${paginationState.curPage}&include_adult=false`
+        )
+        setContent(data.results);
+        setPaginationState({curPage: paginationState.curPage, numOfPages: data.total_pages});
+      }
     } catch (error) {
       console.error(error);
     }

@@ -35,6 +35,7 @@ export default function SimpleBottomNavigation() {
         zIndex: 100,
       }}
       onChange={(event, newValue) => {
+          window.scroll(0,0);
           setValue(newValue);
       }}
       showLabels
