@@ -6,21 +6,20 @@ import SingleContent from '../../components/SingleContent/SingleContent';
 import "./Trending.css"
 
 const Trending = () => {
-  const [page, setPage] = useState(1)
   const [content, setContent] = useState([]);
+  const [paginationState, setPaginationState] = useState({curPage: 1, numOfPages: 10});
 
   const fetchTrending = async () => {
     const {data} = await axios.get(
-      `https://api.themoviedb.org/3/trending/movie/day?api_key=${process.env.REACT_APP_API_KEY}&page=${page}`
+      `https://api.themoviedb.org/3/trending/movie/day?api_key=${process.env.REACT_APP_API_KEY}&page=${paginationState.curPage}`
     );
 
-    console.log(data);
     setContent(data.results);
   }
 
   useEffect(() => {
     fetchTrending()
-  }, [page])
+  }, [paginationState.curPage])
   
 
   return (
@@ -38,7 +37,7 @@ const Trending = () => {
           ))}
         </div>
         
-        <CustomPagination setPage={setPage} />
+        <CustomPagination paginationState={paginationState} setPaginationState={setPaginationState}/>
 
     </div>
   )

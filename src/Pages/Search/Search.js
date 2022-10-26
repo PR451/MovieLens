@@ -14,22 +14,20 @@ const darkTheme = createTheme({
 
 const Search = () => {
   const [type, setType] = useState(0);
-  const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
   const [content, setContent] = useState([]);
-  const [numOfPages, setNumOfPages] = useState();
   const [isSearch, setIsSearch] = useState(false);
+  const [paginationState, setPaginationState] = useState({curPage: 1, numOfPages: 0});
 
   const fetchSearch = async () => {
     try {
       const {data} = await axios.get(
         `https://api.themoviedb.org/3/search/${type ? "tv":"movie"}?api_key=${
           process.env.REACT_APP_API_KEY
-        }&language=en-US&query=${searchText}&page=${page}&include_adult=false`
+        }&language=en-US&query=${searchText}&page=${paginationState.curPage}&include_adult=false`
       )
-      console.log("pageNum: " + page);
       setContent(data.results);
-      setNumOfPages(data.total_pages);
+      setPaginationState({curPage: paginationState.curPage, numOfPages: data.total_pages});
     } catch (error) {
       console.error(error);
     }
@@ -48,7 +46,7 @@ const Search = () => {
   useEffect(() => {
     fetchSearch()
     // eslint-disable-next-line
-  }, [type, page]);
+  }, [type, paginationState.curPage]);
 
   return (
     <div>
@@ -76,7 +74,7 @@ const Search = () => {
             textColor='primary'
             onChange={(event, newValue) => {
               setType(newValue);
-              setPage(1);
+              setPaginationState({curPage:1, numOfPages:0})
             }}
             style={{paddingBottom: 5 }}>
             <Tab style={{ width: "50%" }} label="Search Movies" />
@@ -101,9 +99,8 @@ const Search = () => {
             content.length === 0 &&
             (type ? <h2>No Series Found</h2> : <h2>No Movies Found</h2>)}
 
-        {console.log("Rendring page: " + page)}
-        {numOfPages > 1 && (
-          <CustomPagination setPage={setPage} numOfPages={numOfPages} />
+        {paginationState.numOfPages > 1 && (
+          <CustomPagination paginationState={paginationState} setPaginationState={setPaginationState}/>
         )}
 
 

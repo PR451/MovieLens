@@ -6,27 +6,25 @@ import SingleContent from '../../components/SingleContent/SingleContent'
 import useGenre from '../../hooks/useGenre';
 
 const Series = () => {
-  const [page, setPage] = useState(1);
   const [content, setContent] = useState([]);
-  const [numOfPages, setNumOfPages] = useState();
+  const [paginationState, setPaginationState] = useState({ curPage: 1, numOfPages: 0 });
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [genres, setGenres] = useState([]);
   const genreforURL = useGenre(selectedGenres);
 
   const fetchSeries = async () => {
     const { data } = await axios.get(
-      `https://api.themoviedb.org/3/discover/tv?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${page}&with_genres=${genreforURL}`
+      `https://api.themoviedb.org/3/discover/tv?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${paginationState.curPage}&with_genres=${genreforURL}`
     );
 
-    console.log(data);
     setContent(data.results);
-    setNumOfPages(data.total_pages);
+    setPaginationState({ curPage: paginationState.curPage, numOfPages: data.total_pages });
   }
 
   useEffect(() => {
     fetchSeries()
     // eslint-disable-next-line
-  }, [page, genreforURL]);
+  }, [paginationState.curPage, genreforURL]);
 
 
   return (
@@ -39,7 +37,7 @@ const Series = () => {
           setSelectedGenres={setSelectedGenres} 
           genres={genres} 
           setGenres={setGenres}
-          setPage={setPage}/>
+          setPaginationState={setPaginationState}/>
         <div className='trending'>
           {content && content.map((c) => (
             <SingleContent
@@ -51,8 +49,9 @@ const Series = () => {
               vote_average={c.vote_average}/>
           ))}
         </div>
-        {numOfPages > 1 && 
-          (<CustomPagination setPage={setPage} numOfPages={numOfPages}/>)}
+        {paginationState.numOfPages > 1 && (
+          <CustomPagination paginationState={paginationState} setPaginationState={setPaginationState}/>
+        )}
 
     </div>
   )

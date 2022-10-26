@@ -15,19 +15,19 @@ const Genres = ({
   setSelectedGenres,
   genres,
   setGenres,
-  setPage
+  setPaginationState
 }) => {
 
   const hanldeAdd = (genre) => {
     setSelectedGenres([...selectedGenres, genre]);
     setGenres(genres.filter((g) => g.id !== genre.id));
-    setPage(1);
+    setPaginationState({curPage: 1, numOfPages:0});
   }
 
   const hanldeRemove = (genre) => {
     setGenres([...genres, genre]);
     setSelectedGenres(selectedGenres.filter((g) => g.id !== genre.id));
-    setPage(1);
+    setPaginationState({curPage: 1, numOfPages:0});
   }
 
   const fetchGenres = async () => {
@@ -36,10 +36,6 @@ const Genres = ({
     );
     setGenres(data.genres);
   };
-
-  genres.map((genre) => {
-    console.log(genre)
-  })
 
   useEffect(() => {
     fetchGenres();
